@@ -1,12 +1,12 @@
 ## marco_stuff
 
-### gen_netcdf
+#### gen_netcdf
 Module to generate netCDF files.
 
-### nemo_tools
+#### nemo_tools
 Module to analize nemo outputs.
 
-To install:
+### To install:
 ```bash
 pip install git+https://github.com/marcolarranaga/marco_stuff
 ```
