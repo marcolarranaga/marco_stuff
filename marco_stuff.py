@@ -89,7 +89,7 @@ class gen_netcdf:
         ncfile.close()
     #}}}
 
-class arakawac:
+class nemo_tools:
 
     ### geocurrents ####{{{
     def geocurrents(h,lon,lat):
@@ -97,10 +97,16 @@ class arakawac:
 
         Function that compute geostrophic current by considering a beta plane in latitudes near to 0 degrees.
 
-        Args:
-            h: Sea surface height or sea level anomaly (could be a 2d or 3d matrix).
-            lon: 2d longitude matrix.
-            lat: 2d latitude matrix.
+        This function uses 2dx(y) to derivate.
+
+        Inputs:
+            h: Sea surface height or sea level anomaly (m). h could be a 2d or 3d matrix.
+            lon: 2d longitude matrix (degrees).
+            lat: 2d latitude matrix (degrees).
+
+        Outputs"
+            u_g: Nstward geostrophic currents (m/s)
+            v_g: Northward geostrophic currents (m/s)
         """
     
         g=9.81
