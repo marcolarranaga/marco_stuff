@@ -6,7 +6,7 @@ Module to generate netCDF files.
 #### nemo_tools
 Module to analize nemo outputs.
 
-### quick_plot
+#### quick_plot
 This module allows you to do quick plots that can be configured by basics parameters.
 
 ### To install:
