@@ -20,5 +20,5 @@ pip install -e .
 
 ### To uninstall:
 ```bash
-conda uninstall <module_name>
+conda uninstall marco_stuff
 ```
