@@ -13,3 +13,7 @@ This module allows you to do quick plots that can be configured by basics parame
 ```bash
 pip install git+https://github.com/marcolarranaga/marco_stuff
 ```
+or in the module folder:
+```bash
+pip install -e .
+```
