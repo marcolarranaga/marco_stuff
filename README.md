@@ -17,3 +17,8 @@ or in the module folder:
 ```bash
 pip install -e .
 ```
+
+### To uninstall:
+```bash
+conda uninstall <module_name>
+```
