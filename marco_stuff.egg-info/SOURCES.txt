@@ -1,0 +1,6 @@
+setup.py
+marco_stuff.egg-info/PKG-INFO
+marco_stuff.egg-info/SOURCES.txt
+marco_stuff.egg-info/dependency_links.txt
+marco_stuff.egg-info/requires.txt
+marco_stuff.egg-info/top_level.txt
