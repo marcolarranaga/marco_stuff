@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib import path
 from matplotlib.colors import ListedColormap
 import keyboard
+from datetime import datetime
+import sys
 
 ### marco_stuff ###{{{
 class marco_stuff:
@@ -894,48 +896,60 @@ class colormap:
     ###}}}
 
 #}}}
-#
-#### remtime ###{{{
-#class remtime:
-#
-#    def remtime1
-#
-#        str=[];
-#        itcont=1;
-#        deltat=0;
-#        ti=nc.date2num(datetime.now(),'days since 1-1-1')
-#
-#        return [ti,deltat,itcont,str]
-#
-#
-#    def remtime2(totalt,ircont,deltat,ti,str):
-#
-#        str=[];
-#        itcont=1;
-#        deltat=0;
-#        ti=nc.date2num(datetime.now(),'days since 1-1-1')
-#        totalt=100
-#
-#
-#        tf=nc.date2num(datetime.now(),'days since 1-1-1')
-#
-#        remt=deltat/itcont*(totalt - itcont)
-#
-#        progprcnt=np.floor(100 - (totalt - itcont)/totalt*100)
-#        progprcnt2=np.floor(50 - (totalt - itcont)/totalt*50)
-#
-#        sys.stdout.write("\033[F") #back to previous line
-#        sys.stdout.write("\033[K") #clear line
-#
-#        str=''
-#        for l in range(1,progprcnt2+1):
-#            str=str+'#'
-#
-#        for l in range(1,50-progprcnt2+1):
-#            str=str+'.'
-#
-#        remHH=np.floor(remt*24)
-#        remMM=np.floor((remt*24 - remHH)*60)
-#        remSS=np.floor(((remt*24 - remHH)*60 -  remMM)*60)
-##}}}
-#
+
+### remtime ###{{{
+class remtime:
+
+    def remtime1(strend):
+
+        itcont=1;
+        deltat=0;
+        ti=nc.date2num(datetime.now(),'days since 1-1-1')
+
+        str=''
+        for l in range(0,20):
+            str=f'{str}.'
+
+        str=f'{str} 0% - --:--:-- - {strend}'
+
+        print(str)
+
+        return [ti,deltat,itcont,strend]
+
+    def remtime2(totalt,itcont,deltat,ti,strend):
+
+        tf=nc.date2num(datetime.now(),'days since 1-1-1')
+
+        deltat=deltat + (tf-ti)
+
+        remt=deltat/itcont*(totalt - itcont)
+
+        progprcnt=int(np.floor(100 - (totalt - itcont)/totalt*100))
+        progprcnt2=int(np.floor(20 - (totalt - itcont)/totalt*20))
+
+        sys.stdout.write("\033[F") #back to previous line
+        sys.stdout.write("\033[K") #clear line
+
+        str=''
+        for l in range(0,progprcnt2):
+            str=f'{str}#'
+
+        for l in range(0,20-progprcnt2):
+            str=f'{str}.'
+
+        remHH=int(np.floor(remt*24))
+        remMM=int(np.floor((remt*24 - remHH)*60))
+        remSS=int(np.floor(((remt*24 - remHH)*60 -  remMM)*60))
+
+        str=f'{str} {progprcnt}% - {remHH}:{remMM:02d}:{remSS:02d} - {strend}'
+
+        print(str)
+
+        ti=tf*1
+
+        itcont=itcont+1
+
+        return [ti,deltat,itcont,str]
+
+#}}}
+
