@@ -1,8 +1,5 @@
 ## marco_stuff
 
-#### gen_netcdf
-Module to generate netCDF files.
-
 #### nemo_tools
 Module to analize nemo outputs.
 
