@@ -4,7 +4,9 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib import path
 from matplotlib.colors import ListedColormap
-import keyboard
+import matplotlib.patches as mpatches
+import cartopy
+import cartopy.crs as ccrs
 from datetime import datetime
 import sys
 
@@ -431,18 +433,53 @@ class quick_plot:
         fig.show()
     #}}}
 
-#    def logpcolor(ax,var,expmin,expmax,**kwargs):
-#
-#        expmin=0
-#        expmax=2
-#
-#        poslogvect=np.array(())
-#        for j in range(expmin,maxexp):
-#
-#            poslogvect=np.append(poslogvect,e
+    ### fill_poly ###{{{
+    def fill_poly(args,**kwargs):
+
+        param=['ax'      ,'alpha','edgecolor','facecolor','label','linestyle','linewidth','zorder','transform']
+        paramv=[plt.gca(),1      ,'k'        ,'b'        ,''     ,'-'        ,1          ,0       ,ccrs.PlateCarree()]
+        x=args[0]*1
+        y=args[1]*1
+
+        paramin=[]
+        paramvin=[]
+        for key, value in kwargs.items():
+
+            paramin.append(key)
+            paramvin.append(value)
+
+
+        if len(paramin) > 0:
+            for k in range(0,len(param)):
+
+                ind=[paramin.index(i) for i in paramin if param[k] in i]
+
+                if len(ind) == 1:
+
+                    paramv[k]=paramvin[ind[0]]
+
+
+        ind=np.where(np.isnan(x) == 1)[0]
+
+        for j in range(len(ind)-1):
+
+            polygon=np.zeros((len(range(ind[j]+1,ind[j+1]-2)),2))
+            polygon[:,0]=x[ind[j]+1:ind[j+1]-2]
+            polygon[:,1]=y[ind[j]+1:ind[j+1]-2]
+
+            poly=mpatches.Polygon(polygon,alpha=paramv[0],edgecolor=paramv[1],facecolor=paramv[2],
+                    label=paramv[3],linestyle=paramv[4],linewidth=paramv[5],zorder=paramv[6],
+                    transform=paramv[7])
+
+            ax.add_patch(poly)
+
+        return poly
+
 #}}}
 
-### colormap ###{{{
+###}}}
+
+### class colormap ###{{{
 class colormap:
 
     ### parula ###{{{
@@ -895,9 +932,181 @@ class colormap:
         return jet
     ###}}}
 
+    ### redbluemod ###{{{
+    def redbluemod(*args):
+
+        # colormap #{{{
+
+        # Config{{{
+        bd=np.array([27 ,38 ,49 ])/255
+        b =np.array([0  ,0  ,200])/255
+        g =np.array([26 ,82 ,118])/255
+        g =np.array([52 ,152,219])/255
+        gl=np.array([171,235,198])/255
+        w =np.array([255,255,255])/255
+        yl=np.array([249,231,159])/255
+        y =np.array([230,126,34 ])/255
+        r =np.array([200,0  ,0  ])/255
+        rd=np.array([100,30 ,22 ])/255
+
+        np_bd_b=40
+        np_b_g =40
+        np_g_gl=35
+        np_gl_w=5
+        np_w_yl=5
+        np_yl_y=35
+        np_y_r =40
+        np_r_rd=40
+        np_sumi=0
+        #}}}
+
+        # bd to b {{{
+        R=np.interp(np.array(range(np_bd_b+1)),np.array((0,np_bd_b)),np.array((bd[0],b[0])))
+        G=np.interp(np.array(range(np_bd_b+1)),np.array((0,np_bd_b)),np.array((bd[1],b[1])))
+        B=np.interp(np.array(range(np_bd_b+1)),np.array((0,np_bd_b)),np.array((bd[2],b[2])))
+        np_sumi=np_sumi + np_bd_b
+        np_sumf=np_sumi + np_b_g
+        #}}}
+        
+        # b to g {{{
+        Rtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((b[0],g[0])))
+        Gtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((b[1],g[1])))
+        Btmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((b[2],g[2])))
+
+        R=np.append(R,Rtmp[1:])
+        G=np.append(G,Gtmp[1:])
+        B=np.append(B,Btmp[1:])
+        np_sumi=np_sumi + np_b_g
+        np_sumf=np_sumi + np_g_gl
+        #}}}
+
+        # g to gl {{{
+        Rtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((g[0],gl[0])))
+        Gtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((g[1],gl[1])))
+        Btmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((g[2],gl[2])))
+
+        R=np.append(R,Rtmp[1:])
+        G=np.append(G,Gtmp[1:])
+        B=np.append(B,Btmp[1:])
+        np_sumi=np_sumi + np_g_gl
+        np_sumf=np_sumi + np_gl_w
+        #}}}
+
+        # gl to w {{{
+        Rtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((gl[0],1)))
+        Gtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((gl[1],1)))
+        Btmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((gl[2],1)))
+
+        R=np.append(R,Rtmp[1:])
+        G=np.append(G,Gtmp[1:])
+        B=np.append(B,Btmp[1:])
+        np_sumi=np_sumi + np_gl_w
+        np_sumf=np_sumi + np_w_yl
+        #}}}
+
+        # w to yl {{{
+        Rtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((1,yl[0])))
+        Gtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((1,yl[1])))
+        Btmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((1,yl[2])))
+
+        R=np.append(R,Rtmp[1:])
+        G=np.append(G,Gtmp[1:])
+        B=np.append(B,Btmp[1:])
+        np_sumi=np_sumi + np_w_yl
+        np_sumf=np_sumi + np_yl_y
+        #}}}
+
+        # yl to y {{{
+        Rtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((yl[0],y[0])))
+        Gtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((yl[1],y[1])))
+        Btmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((yl[2],y[2])))
+
+        R=np.append(R,Rtmp[1:])
+        G=np.append(G,Gtmp[1:])
+        B=np.append(B,Btmp[1:])
+        np_sumi=np_sumi + np_yl_y
+        np_sumf=np_sumi + np_y_r
+        #}}}
+
+        # y to r {{{
+        Rtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((y[0],r[0])))
+        Gtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((y[1],r[1])))
+        Btmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((y[2],r[2])))
+
+        R=np.append(R,Rtmp[1:])
+        G=np.append(G,Gtmp[1:])
+        B=np.append(B,Btmp[1:])
+        np_sumi=np_sumi + np_y_r
+        np_sumf=np_sumi + np_r_rd
+        #}}}
+
+        # r to rd {{{
+        Rtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((r[0],rd[0])))
+        Gtmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((r[1],rd[1])))
+        Btmp=np.interp(np.array(range(np_sumi,np_sumf+1)),np.array((np_sumi,np_sumf)),
+            np.array((r[2],rd[2])))
+
+        R=np.append(R,Rtmp[1:])
+        G=np.append(G,Gtmp[1:])
+        B=np.append(B,Btmp[1:])
+        np_sumi=np_sumi + np_r_rd
+        #}}}
+
+        #}}}
+
+        redbluemodorig=np.array((R,G,B)).transpose()
+        rows=np.linspace(0,1,np.max(redbluemodorig.shape))
+
+        if len(args) == 0:
+
+            N=65
+            rowsi=np.linspace(0,1,N)
+            redbluemod=np.ones((len(rowsi),3))*np.NaN
+            redbluemod[:,0]=np.interp(rowsi,rows,redbluemodorig[:,0])
+            redbluemod[:,1]=np.interp(rowsi,rows,redbluemodorig[:,1])
+            redbluemod[:,2]=np.interp(rowsi,rows,redbluemodorig[:,2])
+
+            redbluemod=ListedColormap(redbluemod)
+
+        elif len(args) == 1:
+
+            N=args[0]
+            rowsi=np.linspace(0,1,N)
+            redbluemod=np.ones((len(rowsi),3))*np.NaN
+
+            redbluemod[:,0]=np.interp(rowsi,rows,redbluemodorig[:,0])
+            redbluemod[:,1]=np.interp(rowsi,rows,redbluemodorig[:,1])
+            redbluemod[:,2]=np.interp(rowsi,rows,redbluemodorig[:,2])
+
+            redbluemod=ListedColormap(redbluemod)
+
+        return redbluemod
+    ###}}}
+
+
 #}}}
 
-### remtime ###{{{
+### class remtime ###{{{
 class remtime:
 
     def remtime1(strend):
